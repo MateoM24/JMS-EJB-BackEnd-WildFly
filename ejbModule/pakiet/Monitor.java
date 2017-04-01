@@ -13,7 +13,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 
 /**
- * Message-Driven Bean implementation class for: BeenLogger
+ * Message-Driven Bean implementation class for: Monitor
  */
 @MessageDriven(
 		activationConfig = { @ActivationConfigProperty(
@@ -21,12 +21,24 @@ import javax.jms.TextMessage;
 				propertyName = "destinationType", propertyValue = "javax.jms.Topic")
 		}, 
 		mappedName = "jms.topic.sriTopic")
-public class BeanLogger implements MessageListener {
-
+public class Monitor implements MessageListener {
+	
+	public static enum Norm{
+		ENGINE_MAX(85),
+		OIL_MAX(8),
+		OIL_MIN(2),
+		TYRES_MAX(8),
+		TYRES_MIN(2);
+		private int value;
+		private Norm(int value){
+			this.value=value;
+		}
+	}
+	
     /**
      * Default constructor. 
      */
-    public BeanLogger() {
+    public Monitor() {
         // TODO Auto-generated constructor stub
     }
 	
@@ -35,28 +47,25 @@ public class BeanLogger implements MessageListener {
      */
     public void onMessage(Message message) {
     	try {
-            if (message instanceof TextMessage) {
-                System.out.println("Topic: I received a TextMessage");
-                TextMessage msg = (TextMessage) message;
-                System.out.println("Message is : " + msg.getText());
-            } else if (message instanceof ObjectMessage) {
-                System.out.println("Topic: I received an ObjectMessage");
+            if (message instanceof ObjectMessage) {
+                System.out.println("Monitor=> odebra³em wiadomoœæ z topic");
                 ObjectMessage msg = (ObjectMessage) message;
                 DTOState state = (DTOState) msg.getObject();
-                System.out.println(state);
-                File plik=new File("E:\\logSRI3.txt");
-                plik.createNewFile();
-                FileWriter fileWriter=new FileWriter(plik,true);
-                fileWriter.write(state.toString()+"\n");
-                fileWriter.flush();
-                fileWriter.close();
-                System.out.println("I've written it to file E:/logSRI3.txt");
+              
+                
             } else {
                 System.out.println("Not a valid message for this Queue MDB");
             }
-        } catch (JMSException | IOException e) {
+        } catch (JMSException e) {
             e.printStackTrace();
         }
+    }
+    private Boolean[] checkValues(){ 
+    	Boolean[] results={true,true};
+    	//tu dopisz sprawdzanie tych wartoœci i niech pierwsza wartosc rezults mówi czy przes³ac do kierwcy alarm,
+    	//a druga czy do mechanikow tez
+    	
+    	return results;
     }
 
 }
