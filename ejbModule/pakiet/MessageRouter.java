@@ -43,23 +43,23 @@ public class MessageRouter implements MessageListener {
     public void onMessage(Message message) {
     	Connection connection=null;
     	try {
-        	System.out.println("MessageRouter=> odebra³em wiadomoœæ z sriQueue");
             ObjectMessage msg = (ObjectMessage) message;
 			DTOState state = (DTOState) msg.getObject();
-			boolean[] results=state.getAlerts();
+			boolean driverAlert=state.isDriverAlert();
+			boolean mecanicAlert=state.isMechanicAlert();
 			//===
 			connection = connectionFactory.createConnection();
 			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 	        
 	        ObjectMessage processedMsg=session.createObjectMessage(state);
-	        System.out.println(state);
-			if(results[0]==true){
+	        System.out.println("MessageRouter-otrzyma³em: "+state);
+			if(driverAlert==true){
 			//wyslij do driverQueue	
 				MessageProducer messageProducer = session.createProducer(driverQueue);
 				messageProducer.send(processedMsg);
 				System.out.println("MessageRouter=> wys³¹³em wiadomoœæ do driverQueue");
 			}
-			if(results[1]==true){
+			if(mecanicAlert==true){
 				//wyœlij do mechanicQueue
 				MessageProducer messageProducer = session.createProducer(mechanicQueue);
 				messageProducer.send(processedMsg);

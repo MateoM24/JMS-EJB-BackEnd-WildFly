@@ -62,14 +62,14 @@ public class Monitor implements MessageListener {
                 System.out.println("Monitor=> odebra³em wiadomoœæ z sriTopic");
                 ObjectMessage msg = (ObjectMessage) message;
                 DTOState state = (DTOState) msg.getObject();
-                boolean[] results=checkValues(state);
-                state.setAlerts(results);
+                DTOState checkedState=checkValues(state);
+                System.out.println("checkedState"+checkedState);
                 //=========
                 connection = connectionFactory.createConnection();
     			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     	        MessageProducer messageProducer = session.createProducer(queue);
-    	        ObjectMessage processedMsg=session.createObjectMessage(state);
-    	        messageProducer.send(message);
+    	        ObjectMessage processedMsg=session.createObjectMessage(checkedState);
+    	        messageProducer.send(processedMsg);
         } catch (JMSException e) {
             e.printStackTrace();
         }finally{
@@ -82,27 +82,23 @@ public class Monitor implements MessageListener {
 				}
 		}
     }
-    private boolean[] checkValues(DTOState state){ 
-    	boolean[] results={false,false};
+    private DTOState checkValues(DTOState state){ 
     	//tu dopisz sprawdzanie tych wartoœci i niech pierwsza wartosc rezults mówi czy przes³ac do kierowcy alarm,
     	//a druga czy do mechanikow tez
     	int engine=state.getEngineTemp();
     	int oil=state.getOilPressure();
     	int tyres=state.getTyresPressure();
     	int alerts=0;
-    	//if (engine>Norm.ENGINE_MAX.value){alerts=+1;}
-    	//if (oil>Norm.OIL_MAX.value||oil<Norm.OIL_MIN.value){alerts=+1;}
-    	//if (tyres>Norm.TYRES_MAX.value||tyres<Norm.TYRES_MIN.value){alerts=+1;}
+    	System.out.println("sprawdzam obiekt");
+    	System.out.println(state);
+    	System.out.println("engine: "+engine);
+    	System.out.println("oil: "+oil);
+    	System.out.println("tyres: "+tyres);
     	if (engine>80){alerts+=1;}
     	if (oil>7||oil<3){alerts+=1;}
     	if (tyres>7||tyres<3){alerts+=1;}
-    	if (alerts>0){
-    		results[0]=true;
-    		if (alerts>1){
-    			results[1]=true;
-    		}
-    	}
-    	return results;
+    	DTOState processedState=new DTOState(engine, tyres, oil, LocalDateTime.now(), (alerts>0)? true:false, (alerts>1)?true:false);
+    	System.out.println("ile alertów nastawionych? : "+alerts);
+    	return processedState;
     }
-
 }

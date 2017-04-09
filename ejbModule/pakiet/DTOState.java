@@ -10,21 +10,24 @@ public class DTOState implements Serializable {
 	int TyresPressure;
 	int OilPressure;
 	LocalDateTime time;
-	boolean[] alerts={false,false};
+	boolean driverAlert;
+	boolean mechanicAlert;
 	
 	public DTOState(){}
-	
-	public DTOState(int engineTemp, int tyresPressure, int oilPressure, LocalDateTime time, boolean[] alerts) {
+
+	public int getEngineTemp() {
+		return EngineTemp;
+	}
+
+	public DTOState(int engineTemp, int tyresPressure, int oilPressure, LocalDateTime time, boolean driverAlert,
+			boolean mechanicAlert) {
 		super();
 		EngineTemp = engineTemp;
 		TyresPressure = tyresPressure;
 		OilPressure = oilPressure;
 		this.time = time;
-		this.alerts=alerts;
-	}
-
-	public int getEngineTemp() {
-		return EngineTemp;
+		this.driverAlert = driverAlert;
+		this.mechanicAlert = mechanicAlert;
 	}
 
 	public void setEngineTemp(int engineTemp) {
@@ -58,15 +61,23 @@ public class DTOState implements Serializable {
 	@Override
 	public String toString() {
 		return "DTOState [EngineTemp=" + EngineTemp + ", TyresPressure=" + TyresPressure + ", OilPressure="
-				+ OilPressure + ", time=" + time + ", alert driver?:"+alerts[0]+", alert mechanic?:"+alerts[1]+"]";
+				+ OilPressure + ", time=" + time + ", alert driver?:"+driverAlert+", alert mechanic?:"+mechanicAlert+"]";
 	}
 
-	public boolean[] getAlerts() {
-		return alerts;
+	public boolean isDriverAlert() {
+		return driverAlert;
 	}
 
-	public void setAlerts(boolean[] alerts) {
-		this.alerts = alerts;
+	public void setDriverAlert(boolean driverAlert) {
+		this.driverAlert = driverAlert;
+	}
+
+	public boolean isMechanicAlert() {
+		return mechanicAlert;
+	}
+
+	public void setMechanicAlert(boolean mechanicAlert) {
+		this.mechanicAlert = mechanicAlert;
 	}
 	
 }
