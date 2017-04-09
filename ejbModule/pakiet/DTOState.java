@@ -6,42 +6,44 @@ import java.time.LocalDateTime;
 public class DTOState implements Serializable {
 	
 	private static final long serialVersionUID = 3660740683713241761L;
-	double EngineTemp;
-	double TyresPressure;
-	double OilPressure;
+	int EngineTemp;
+	int TyresPressure;
+	int OilPressure;
 	LocalDateTime time;
+	boolean[] alerts={false,false};
 	
 	public DTOState(){}
 	
-	public DTOState(double engineTemp, double tyresPressure, double oilPressure, LocalDateTime time) {
+	public DTOState(int engineTemp, int tyresPressure, int oilPressure, LocalDateTime time, boolean[] alerts) {
 		super();
 		EngineTemp = engineTemp;
 		TyresPressure = tyresPressure;
 		OilPressure = oilPressure;
 		this.time = time;
+		this.alerts=alerts;
 	}
 
-	public double getEngineTemp() {
+	public int getEngineTemp() {
 		return EngineTemp;
 	}
 
-	public void setEngineTemp(double engineTemp) {
+	public void setEngineTemp(int engineTemp) {
 		EngineTemp = engineTemp;
 	}
 
-	public double getTyresPressure() {
+	public int getTyresPressure() {
 		return TyresPressure;
 	}
 
-	public void setTyresPressure(double tyresPressure) {
+	public void setTyresPressure(int tyresPressure) {
 		TyresPressure = tyresPressure;
 	}
 
-	public double getOilPressure() {
+	public int getOilPressure() {
 		return OilPressure;
 	}
 
-	public void setOilPressure(double oilPressure) {
+	public void setOilPressure(int oilPressure) {
 		OilPressure = oilPressure;
 	}
 
@@ -56,7 +58,15 @@ public class DTOState implements Serializable {
 	@Override
 	public String toString() {
 		return "DTOState [EngineTemp=" + EngineTemp + ", TyresPressure=" + TyresPressure + ", OilPressure="
-				+ OilPressure + ", time=" + time + "]";
+				+ OilPressure + ", time=" + time + ", alert driver?:"+alerts[0]+", alert mechanic?:"+alerts[1]+"]";
+	}
+
+	public boolean[] getAlerts() {
+		return alerts;
+	}
+
+	public void setAlerts(boolean[] alerts) {
+		this.alerts = alerts;
 	}
 	
 }

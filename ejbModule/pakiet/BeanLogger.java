@@ -36,14 +36,14 @@ public class BeanLogger implements MessageListener {
     public void onMessage(Message message) {
     	try {
             if (message instanceof TextMessage) {
-                System.out.println("Topic: I received a TextMessage");
+                System.out.println("BeanLogger: I received a TextMessage from sriTopic");
                 TextMessage msg = (TextMessage) message;
                 System.out.println("Message is : " + msg.getText());
             } else if (message instanceof ObjectMessage) {
-                System.out.println("Topic: I received an ObjectMessage");
+                System.out.println("BeanLogger: I received an ObjectMessage from sriTopic");
                 ObjectMessage msg = (ObjectMessage) message;
                 DTOState state = (DTOState) msg.getObject();
-                System.out.println(state);
+                //System.out.println(state);
                 File plik=new File("E:\\logSRI3.txt");
                 plik.createNewFile();
                 FileWriter fileWriter=new FileWriter(plik,true);
