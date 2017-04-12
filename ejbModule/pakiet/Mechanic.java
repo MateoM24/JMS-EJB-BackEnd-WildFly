@@ -13,34 +13,27 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueReceiver;
-import javax.jms.QueueSession;
 import javax.jms.Session;
-import javax.jms.TemporaryQueue;
 import javax.jms.TextMessage;
 
 /**
- * Message-Driven Bean implementation class for: Driver
+ * Message-Driven Bean implementation class for: Mechanic
  */
 @MessageDriven(
 		activationConfig = { @ActivationConfigProperty(
-				propertyName = "destination", propertyValue = "java:/jms.queue.DriverQueue"), @ActivationConfigProperty(
+				propertyName = "destination", propertyValue = "java:/jms.queue.PitStopQueue"), @ActivationConfigProperty(
 				propertyName = "destinationType", propertyValue = "javax.jms.Queue")
 		}, 
-		mappedName = "java:/jms.queue.DriverQueue")
-public class Driver implements MessageListener {
+		mappedName = "java:/jms.queue.PitStopQueue")
+public class Mechanic implements MessageListener {
 
 	@Resource(mappedName = "java:/ConnectionFactory")
     private ConnectionFactory connectionFactory;
 	
-	@Resource(lookup =  "java:/jms.queue.PitStopQueue")
-    private Queue PitStopQueue;
-	
 	//@Resource(lookup =  "java:/jms.queue.ResponseQueue")
-    //private Queue ResponseQueue;
-	
-    public Driver() {
+   // private Queue ResponseQueue;
+
+    public Mechanic() {
         // TODO Auto-generated constructor stub
     }
 	
@@ -49,24 +42,25 @@ public class Driver implements MessageListener {
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)//M
     public void onMessage(Message message) {
-        //DOPISAC jakies warunki przesy³ania proŸby do mechaników
-    	QueueConnection connection=null;
+        // TODO Auto-generated method stub
+        String answer=null;
+    	if(Math.random()>=0.5){
+        	answer="Yes";
+        }else{
+        	answer="No";
+        }
+    	Connection connection=null;
 		try {
-			ObjectMessage msg = (ObjectMessage) message;
-			DTOState state = (DTOState) msg.getObject();
-			System.out.println("Driver: I've received->"+state);
-			connection = (QueueConnection)connectionFactory.createConnection();
-			QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-			TemporaryQueue tempQ = session.createTemporaryQueue();
-			MessageProducer messageProducer = session.createProducer(PitStopQueue);
+			TextMessage msg = (TextMessage) message;
+			String receivedMessage =msg.getText();
+			System.out.println("Mecanic: I've received text message->"+receivedMessage);
+			connection = connectionFactory.createConnection();
+			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			MessageProducer messageProducer = session.createProducer(message.getJMSReplyTo());
 			TextMessage messageToSend=session.createTextMessage();
-			messageToSend.setJMSReplyTo(tempQ);
-			messageToSend.setText("Can I go to pit stop?");
+			messageToSend.setText(answer);
+			System.out.println("Mechanic wysy³a wiadomoœæ:"+messageToSend.getText());
 			messageProducer.send(messageToSend);
-			QueueReceiver receiver = session.createReceiver(tempQ);
-			connection.start();
-			TextMessage returnedMsg=(TextMessage)receiver.receive();
-			System.out.println("Driver: otrzyma³em odpowiedŸ: "+returnedMsg.getText());
 			
 		} catch (JMSException e) {
 			// TODO Auto-generated catch block
@@ -80,7 +74,6 @@ public class Driver implements MessageListener {
 					e.printStackTrace();
 				}
 		}
-        
     }
 
 }
