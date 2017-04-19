@@ -13,9 +13,6 @@ import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
 
-/**
- * Message-Driven Bean implementation class for: MessageRouter
- */
 @MessageDriven(
 		activationConfig = { @ActivationConfigProperty(
 				propertyName = "destination", propertyValue = "java:/jms.queue.sriQueue"), @ActivationConfigProperty(
@@ -33,13 +30,8 @@ public class MessageRouter implements MessageListener {
 	@Resource(lookup =  "java:/jms.queue.MechanicQueue")
     private Queue mechanicQueue;
 	
-    public MessageRouter() {
-        // TODO Auto-generated constructor stub
-    }
+    public MessageRouter() {}
 	
-	/**
-     * @see MessageListener#onMessage(Message)
-     */
     public void onMessage(Message message) {
     	Connection connection=null;
     	try {
@@ -47,7 +39,6 @@ public class MessageRouter implements MessageListener {
 			DTOState state = (DTOState) msg.getObject();
 			boolean driverAlert=state.isDriverAlert();
 			boolean mecanicAlert=state.isMechanicAlert();
-			//===
 			connection = connectionFactory.createConnection();
 			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 	        
@@ -67,18 +58,14 @@ public class MessageRouter implements MessageListener {
 			}
 			
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			if(connection!=null)
 				try {
 					connection.close();
 				} catch (JMSException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-		}
-        
+		}  
     }
-
 }

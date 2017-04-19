@@ -16,9 +16,6 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-/**
- * Message-Driven Bean implementation class for: Mechanic
- */
 @MessageDriven(
 		activationConfig = { @ActivationConfigProperty(
 				propertyName = "destination", propertyValue = "java:/jms.queue.PitStopQueue"), @ActivationConfigProperty(
@@ -29,20 +26,11 @@ public class Mechanic implements MessageListener {
 
 	@Resource(mappedName = "java:/ConnectionFactory")
     private ConnectionFactory connectionFactory;
-	
-	//@Resource(lookup =  "java:/jms.queue.ResponseQueue")
-   // private Queue ResponseQueue;
 
-    public Mechanic() {
-        // TODO Auto-generated constructor stub
-    }
+    public Mechanic() {}
 	
-	/**
-     * @see MessageListener#onMessage(Message)
-     */
-    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)//M
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void onMessage(Message message) {
-        // TODO Auto-generated method stub
         String answer=null;
     	if(Math.random()>=0.5){
         	answer="Yes";
@@ -63,17 +51,14 @@ public class Mechanic implements MessageListener {
 			messageProducer.send(messageToSend);
 			
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			if(connection!=null)
 				try {
 					connection.close();
 				} catch (JMSException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
     }
-
 }

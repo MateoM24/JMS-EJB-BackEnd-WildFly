@@ -20,9 +20,6 @@ import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 import javax.jms.TextMessage;
 
-/**
- * Message-Driven Bean implementation class for: Driver
- */
 @MessageDriven(
 		activationConfig = { @ActivationConfigProperty(
 				propertyName = "destination", propertyValue = "java:/jms.queue.DriverQueue"), @ActivationConfigProperty(
@@ -37,19 +34,11 @@ public class Driver implements MessageListener {
 	@Resource(lookup =  "java:/jms.queue.PitStopQueue")
     private Queue PitStopQueue;
 	
-	//@Resource(lookup =  "java:/jms.queue.ResponseQueue")
-    //private Queue ResponseQueue;
+    public Driver() {}
 	
-    public Driver() {
-        // TODO Auto-generated constructor stub
-    }
-	
-	/**
-     * @see MessageListener#onMessage(Message)
-     */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)//M
     public void onMessage(Message message) {
-        //DOPISAC jakies warunki przesy³ania proŸby do mechaników
+        //mozna dopisaæ jakies warunki przesy³ania proŸby do mechaników
     	QueueConnection connection=null;
 		try {
 			ObjectMessage msg = (ObjectMessage) message;
@@ -63,24 +52,21 @@ public class Driver implements MessageListener {
 			messageToSend.setJMSReplyTo(tempQ);
 			messageToSend.setText("Can I go to pit stop?");
 			messageProducer.send(messageToSend);
+			System.out.println("Driver: sent message: Can I go to pit stop?");
 			QueueReceiver receiver = session.createReceiver(tempQ);
 			connection.start();
 			TextMessage returnedMsg=(TextMessage)receiver.receive();
 			System.out.println("Driver: otrzyma³em odpowiedŸ: "+returnedMsg.getText());
 			
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally{
 			if(connection!=null)
 				try {
 					connection.close();
 				} catch (JMSException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
-        
     }
-
 }
